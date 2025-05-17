@@ -52,10 +52,6 @@ matrixBtn.addEventListener('click', () => {
     pampeliskaCount += 100;
     treeCount += 100;
     stoneCount += 100;
-    coalCount += 100;
-    farmCount += 100;
-    forestCount += 100;
-    quarryCount += 100;
     updateUI();
     saveGame();
 });
