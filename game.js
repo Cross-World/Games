@@ -46,19 +46,30 @@ const upgrade3Elem = document.getElementById('upgrade3');
 const matrixBtn = document.getElementById('matrixBtn');
 const researchSection = document.getElementById('researchSection');
 const researchFireElem = document.getElementById('researchFire');
+const researchWoodToolsElem = document.getElementById('researchWoodTools');
+const researchStoneToolsElem = document.getElementById('researchStoneTools');
+const researchBuildingsElem = document.getElementById('researchBuildings');
+const saveBtn = document.getElementById('saveBtn');
+const resetBtn = document.getElementById('resetBtn');
 
 // Chyba v matrixu: +100 ke všem produktům
 matrixBtn.addEventListener('click', () => {
     pampeliskaCount += 100;
     treeCount += 100;
     stoneCount += 100;
+    coalCount += 100;
+    farmCount += 100;
+    forestCount += 100;
+    quarryCount += 100;
     updateUI();
+    saveGame();
 });
 
 // Sběr pampelišky klikem
 clickButton.addEventListener('click', () => {
     pampeliskaCount++;
     updateUI();
+    saveGame();
 });
 
 // Koupě farmy
@@ -67,6 +78,7 @@ buyFarmButton.addEventListener('click', () => {
         pampeliskaCount -= 10;
         farmCount++;
         updateUI();
+        saveGame();
     }
 });
 
@@ -76,6 +88,7 @@ buyForestButton.addEventListener('click', () => {
         pampeliskaCount -= 100;
         forestCount++;
         updateUI();
+        saveGame();
     }
 });
 
@@ -85,6 +98,7 @@ buyQuarryButton.addEventListener('click', () => {
         treeCount -= 100;
         quarryCount++;
         updateUI();
+        saveGame();
     }
 });
 
@@ -97,6 +111,7 @@ upgrade1Elem.addEventListener('click', () => {
         upgrade1Elem.textContent = "2x produkce pampelišek";
         upgrade1Elem.classList.add('purchased');
         updateUI();
+        saveGame();
     }
 });
 
@@ -110,6 +125,7 @@ upgrade2Elem.addEventListener('click', () => {
         upgrade2Elem.textContent = "2x produkce pampelišek";
         upgrade2Elem.classList.add('purchased');
         updateUI();
+        saveGame();
     }
 });
 
@@ -130,6 +146,7 @@ if (upgrade3Elem) {
             upgrade3Elem.textContent = "2x produkce pampelišek";
             upgrade3Elem.classList.add('purchased');
             updateUI();
+            saveGame();
         }
     });
 }
@@ -147,6 +164,7 @@ researchFireElem.addEventListener('click', () => {
         stoneCount -= 10;
         researchFirePurchased = true;
         updateUI();
+        saveGame();
     }
 });
 
@@ -172,7 +190,60 @@ setInterval(() => {
 
     if (quarryCount > 0) stoneCount += quarryCount * 0.1;
     updateUI();
+    saveGame();
 }, 1000);
+
+// Ukládání hry
+function saveGame() {
+    const gameState = {
+        pampeliskaCount,
+        farmCount,
+        forestCount,
+        treeCount,
+        quarryCount,
+        stoneCount,
+        coalCount,
+        coalProgress,
+        researchFirePurchased,
+        upgrade1Purchased,
+        upgrade2Purchased,
+        upgrade3Purchased,
+        productionMultiplier
+    };
+    localStorage.setItem('gameSave', JSON.stringify(gameState));
+}
+
+// Načtení hry
+function loadGame() {
+    const savedGame = JSON.parse(localStorage.getItem('gameSave'));
+    if (savedGame) {
+        pampeliskaCount = savedGame.pampeliskaCount ?? 0;
+        farmCount = savedGame.farmCount ?? 0;
+        forestCount = savedGame.forestCount ?? 0;
+        treeCount = savedGame.treeCount ?? 0;
+        quarryCount = savedGame.quarryCount ?? 0;
+        stoneCount = savedGame.stoneCount ?? 0;
+        coalCount = savedGame.coalCount ?? 0;
+        coalProgress = savedGame.coalProgress ?? 0;
+        researchFirePurchased = savedGame.researchFirePurchased ?? false;
+        upgrade1Purchased = savedGame.upgrade1Purchased ?? false;
+        upgrade2Purchased = savedGame.upgrade2Purchased ?? false;
+        upgrade3Purchased = savedGame.upgrade3Purchased ?? false;
+        productionMultiplier = savedGame.productionMultiplier ?? 1;
+    }
+}
+
+// Reset hry
+function resetGame() {
+    if (confirm("Opravdu chceš vymazat a restartovat hru?")) {
+        localStorage.removeItem('gameSave');
+        location.reload();
+    }
+}
+
+// Tlačítka pro ruční uložení a reset
+if (saveBtn) saveBtn.addEventListener('click', saveGame);
+if (resetBtn) resetBtn.addEventListener('click', resetGame);
 
 // Aktualizace UI
 function updateUI() {
@@ -259,7 +330,15 @@ function updateUI() {
         researchFireElem.classList.add('purchased');
         researchFireElem.title = "";
     }
+
+    // Ostatní výzkumy (zatím jen text)
+    researchWoodToolsElem.classList.remove('purchased');
+    researchStoneToolsElem.classList.remove('purchased');
+    researchBuildingsElem.classList.remove('purchased');
 }
 
-// První vykreslení
-updateUI();
+// Načti hru při startu
+window.onload = function() {
+    loadGame();
+    updateUI();
+};
