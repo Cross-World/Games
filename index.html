@@ -71,19 +71,24 @@
             z-index: 98;
         }
         .research-tree {
-            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            justify-content: center;
+            min-height: 300px; /* nebo podle potřeby */
+            min-width: 300px;
             width: 100%;
+            border: 1px solid black;
+            box-sizing: border-box;
+            padding: 20px;
+            background: #fff;
         }
         .research-row {
             display: flex;
             justify-content: center;
             width: 100%;
-            margin: 10px 0;
-            gap: 50px;
+            margin: 15px 0;
+            gap: 40px;
         }
         .research-item {
             padding: 8px 15px;
