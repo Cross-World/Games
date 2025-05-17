@@ -8,12 +8,16 @@ let stoneCount = 0;
 let coalCount = 0;
 let coalProgress = 0;
 
-// Stavy a vylepšení
+// Výzkumy a vylepšení
 let researchFirePurchased = false;
+let researchWoodToolsPurchased = false;
+let researchStoneToolsPurchased = false;
 let upgrade1Purchased = false;
 let upgrade2Purchased = false;
 let upgrade3Purchased = false;
 let productionMultiplier = 1;
+let forestEffectMultiplier = 1;
+let quarryEffectMultiplier = 1;
 
 // Elementy
 const pampeliskaCountElem = document.getElementById('pampeliskaCount');
@@ -47,23 +51,24 @@ const researchBuildingsElem = document.getElementById('researchBuildings');
 
 // --- Event listenery ---
 
-// Chyba v matrixu: +100 ke všem produktům
 matrixBtn.addEventListener('click', () => {
     pampeliskaCount += 100;
     treeCount += 100;
     stoneCount += 100;
+    coalCount += 100;
+    farmCount += 100;
+    forestCount += 100;
+    quarryCount += 100;
     updateUI();
     saveGame();
 });
 
-// Sběr pampelišky klikem
 clickButton.addEventListener('click', () => {
     pampeliskaCount++;
     updateUI();
     saveGame();
 });
 
-// Koupě farmy
 buyFarmButton.addEventListener('click', () => {
     if (pampeliskaCount >= 10) {
         pampeliskaCount -= 10;
@@ -73,7 +78,6 @@ buyFarmButton.addEventListener('click', () => {
     }
 });
 
-// Koupě lesa
 buyForestButton.addEventListener('click', () => {
     if (pampeliskaCount >= 100) {
         pampeliskaCount -= 100;
@@ -83,7 +87,6 @@ buyForestButton.addEventListener('click', () => {
     }
 });
 
-// Koupě lomu
 buyQuarryButton.addEventListener('click', () => {
     if (treeCount >= 100) {
         treeCount -= 100;
@@ -93,7 +96,6 @@ buyQuarryButton.addEventListener('click', () => {
     }
 });
 
-// Vylepšení 1 - 2x produkce pampelišek (50 stromů)
 upgrade1Elem.addEventListener('click', () => {
     if (treeCount >= 50 && !upgrade1Purchased) {
         treeCount -= 50;
@@ -106,7 +108,6 @@ upgrade1Elem.addEventListener('click', () => {
     }
 });
 
-// Vylepšení 2 - 2x produkce pampelišek (500 stromů + 500 pampelišek)
 upgrade2Elem.addEventListener('click', () => {
     if (treeCount >= 500 && pampeliskaCount >= 500 && !upgrade2Purchased) {
         treeCount -= 500;
@@ -120,7 +121,6 @@ upgrade2Elem.addEventListener('click', () => {
     }
 });
 
-// Vylepšení 3 - 2x produkce pampelišek (500 kamenů, 1000 stromů, 5000 pampelišek)
 upgrade3Elem.addEventListener('click', () => {
     if (
         stoneCount >= 500 &&
@@ -157,6 +157,40 @@ researchFireElem.addEventListener('click', () => {
     }
 });
 
+// Výzkum Dřevěné nástroje
+researchWoodToolsElem.addEventListener('click', () => {
+    if (
+        researchFirePurchased &&
+        !researchWoodToolsPurchased &&
+        coalCount >= 1000 &&
+        treeCount >= 1000
+    ) {
+        coalCount -= 1000;
+        treeCount -= 1000;
+        researchWoodToolsPurchased = true;
+        forestEffectMultiplier += 0.5;
+        updateUI();
+        saveGame();
+    }
+});
+
+// Výzkum Kamenné nástroje
+researchStoneToolsElem.addEventListener('click', () => {
+    if (
+        researchFirePurchased &&
+        !researchStoneToolsPurchased &&
+        coalCount >= 1000 &&
+        stoneCount >= 1000
+    ) {
+        coalCount -= 1000;
+        stoneCount -= 1000;
+        researchStoneToolsPurchased = true;
+        quarryEffectMultiplier += 0.5;
+        updateUI();
+        saveGame();
+    }
+});
+
 // Ruční uložení
 if (saveBtn) saveBtn.addEventListener('click', () => {
     saveGame();
@@ -176,10 +210,14 @@ if (resetBtn) resetBtn.addEventListener('click', () => {
         coalCount = 0;
         coalProgress = 0;
         researchFirePurchased = false;
+        researchWoodToolsPurchased = false;
+        researchStoneToolsPurchased = false;
         upgrade1Purchased = false;
         upgrade2Purchased = false;
         upgrade3Purchased = false;
         productionMultiplier = 1;
+        forestEffectMultiplier = 1;
+        quarryEffectMultiplier = 1;
         updateUI();
     }
 });
@@ -197,10 +235,14 @@ function saveGame() {
         coalCount,
         coalProgress,
         researchFirePurchased,
+        researchWoodToolsPurchased,
+        researchStoneToolsPurchased,
         upgrade1Purchased,
         upgrade2Purchased,
         upgrade3Purchased,
-        productionMultiplier
+        productionMultiplier,
+        forestEffectMultiplier,
+        quarryEffectMultiplier
     };
     localStorage.setItem('gameSave', JSON.stringify(gameState));
 }
@@ -217,10 +259,14 @@ function loadGame() {
         coalCount = savedGame.coalCount ?? 0;
         coalProgress = savedGame.coalProgress ?? 0;
         researchFirePurchased = savedGame.researchFirePurchased ?? false;
+        researchWoodToolsPurchased = savedGame.researchWoodToolsPurchased ?? false;
+        researchStoneToolsPurchased = savedGame.researchStoneToolsPurchased ?? false;
         upgrade1Purchased = savedGame.upgrade1Purchased ?? false;
         upgrade2Purchased = savedGame.upgrade2Purchased ?? false;
         upgrade3Purchased = savedGame.upgrade3Purchased ?? false;
         productionMultiplier = savedGame.productionMultiplier ?? 1;
+        forestEffectMultiplier = savedGame.forestEffectMultiplier ?? 1;
+        quarryEffectMultiplier = savedGame.quarryEffectMultiplier ?? 1;
     }
 }
 
@@ -229,9 +275,9 @@ function loadGame() {
 setInterval(() => {
     pampeliskaCount += (farmCount * 0.1) * productionMultiplier;
 
-    // Produkce stromů
+    // Produkce stromů s efektem lesů
     if (forestCount > 0) {
-        const deltaTrees = forestCount * 0.1;
+        const deltaTrees = forestCount * 0.1 * forestEffectMultiplier;
         treeCount += deltaTrees;
 
         // Produkce uhlí (pouze pokud je odemčený výzkum Oheň)
@@ -245,7 +291,11 @@ setInterval(() => {
         }
     }
 
-    if (quarryCount > 0) stoneCount += quarryCount * 0.1;
+    // Produkce kamene s efektem lomů
+    if (quarryCount > 0) {
+        stoneCount += quarryCount * 0.1 * quarryEffectMultiplier;
+    }
+
     updateUI();
     saveGame();
 }, 1000);
@@ -326,7 +376,7 @@ function updateUI() {
         researchSection.style.display = 'none';
     }
 
-    // Výzkum "Oheň" - tooltip pouze pokud není zakoupen
+    // Výzkum "Oheň"
     if (!researchFirePurchased) {
         researchFireElem.style.cursor = (pampeliskaCount >= 10 && treeCount >= 10 && stoneCount >= 10) ? 'pointer' : 'default';
         researchFireElem.style.opacity = (pampeliskaCount >= 10 && treeCount >= 10 && stoneCount >= 10) ? '1' : '0.5';
@@ -337,9 +387,43 @@ function updateUI() {
         researchFireElem.title = "";
     }
 
-    // Ostatní výzkumy (zatím jen text)
-    researchWoodToolsElem.classList.remove('purchased');
-    researchStoneToolsElem.classList.remove('purchased');
+    // Výzkum Dřevěné nástroje
+    if (!researchWoodToolsPurchased) {
+        if (researchFirePurchased && coalCount >= 1000 && treeCount >= 1000) {
+            researchWoodToolsElem.classList.add('available');
+            researchWoodToolsElem.style.cursor = 'pointer';
+            researchWoodToolsElem.style.opacity = '1';
+        } else {
+            researchWoodToolsElem.classList.remove('available');
+            researchWoodToolsElem.style.cursor = 'default';
+            researchWoodToolsElem.style.opacity = '0.6';
+        }
+        researchWoodToolsElem.title = researchFirePurchased ? "Cena: 1000 uhlí, 1000 stromů" : "Nejprve vyzkoumej Oheň";
+        researchWoodToolsElem.classList.remove('purchased');
+    } else {
+        researchWoodToolsElem.classList.add('purchased');
+        researchWoodToolsElem.title = "";
+    }
+
+    // Výzkum Kamenné nástroje
+    if (!researchStoneToolsPurchased) {
+        if (researchFirePurchased && coalCount >= 1000 && stoneCount >= 1000) {
+            researchStoneToolsElem.classList.add('available');
+            researchStoneToolsElem.style.cursor = 'pointer';
+            researchStoneToolsElem.style.opacity = '1';
+        } else {
+            researchStoneToolsElem.classList.remove('available');
+            researchStoneToolsElem.style.cursor = 'default';
+            researchStoneToolsElem.style.opacity = '0.6';
+        }
+        researchStoneToolsElem.title = researchFirePurchased ? "Cena: 1000 uhlí, 1000 kamenů" : "Nejprve vyzkoumej Oheň";
+        researchStoneToolsElem.classList.remove('purchased');
+    } else {
+        researchStoneToolsElem.classList.add('purchased');
+        researchStoneToolsElem.title = "";
+    }
+
+    // Výzkum Stavby (zatím pouze text)
     researchBuildingsElem.classList.remove('purchased');
 }
 
