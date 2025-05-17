@@ -59,79 +59,65 @@
             background: #fff;
             z-index: 99;
         }
-     
+        #researchSection {
+            display: none;
+            position: fixed;
+            top: 340px;
+            right: 20px;
+            border: 2px solid black;
+            padding: 10px;
+            width: 350px;
+            background: #fff;
+            z-index: 98;
+        }
         .research-tree {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    width: 100%;
-    border: 1px solid black;
-}
-
-.research-row {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin: 10px 0;
-    gap: 50px; /* mezera mezi položkami v řádku */
-}
-
-.research-item {
-    padding: 8px 15px;
-    border: 1px solid #000;
-    border-radius: 20px;
-    min-width: 120px;
-    text-align: center;
-    background-color: #fff;
-    cursor: default;
-    opacity: 0.6;
-}
-
-.research-item.available {
-    opacity: 1;
-    cursor: pointer;
-}
-
-.research-item.purchased {
-    font-weight: bold;
-    opacity: 1;
-}
-
-.research-label {
-    text-align: center;
-    margin: 5px 0;
-}
-
-.centered {
-    text-align: center;
-}
-
-#researchSection {
-    position: fixed;
-    top: 220px;
-    right: 20px;
-    border: 2px solid black;
-    padding: 10px;
-    width: 350px;
-    background: #fff;
-    z-index: 98;
-}
-
-
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            width: 100%;
+            border: 1px solid black;
+        }
+        .research-row {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin: 10px 0;
+            gap: 50px;
+        }
+        .research-item {
+            padding: 8px 15px;
+            border: 1px solid #000;
+            border-radius: 20px;
+            min-width: 120px;
+            text-align: center;
+            background-color: #fff;
+            cursor: default;
+            opacity: 0.6;
+        }
+        .research-item.available {
+            opacity: 1;
+            cursor: pointer;
+        }
+        .research-item.purchased {
+            font-weight: bold;
+            opacity: 1;
+        }
+        .research-label {
+            text-align: center;
+            margin: 5px 0;
+        }
         .centered {
             text-align: center;
-        }    
-
-        h2 {
-            margin-top: 0;
         }
     </style>
 </head>
 <body>
     <button id="matrixBtn">Chyba v matrixu</button>
-<br><br>
+    <button id="saveBtn">Uložit hru</button>
+    <button id="resetBtn">Resetovat hru</button>
+    <br><br>
 
     <h2>Pampeliška: <span id="pampeliskaCount">0</span></h2>
     <div id="treeCounter" class="counter-row" style="display: none;">
@@ -161,37 +147,33 @@
 
     <div id="upgradesSection">
         <h2 class="centered">Vylepšení</h2>
-        <div id="upgrade1" class="upgrade" title="50 stromů">2x produkce pampelišek</div>
-        <div id="upgrade2" class="upgrade" title="500 stromů, 500 pampelišek">2x produkce pampelišek</div>
-        <div id="upgrade3" class="upgrade" title="500 kamenů, 1000 stromů, 5000 pampelišek">2x produkce pampelišek</div>
+        <div id="upgrade1" class="upgrade" title="Cena: 50 stromů">2x produkce pampelišek</div>
+        <div id="upgrade2" class="upgrade" title="Cena: 500 stromů + 500 pampelišek">2x produkce pampelišek</div>
+        <div id="upgrade3" class="upgrade" title="Cena: 500 kamenů, 1000 stromů, 5000 pampelišek">2x produkce pampelišek</div>
     </div>
 
-    <div id="researchSection" style="display: none;">
-    <h2 class="centered">Výzkum</h2>
-    <div class="research-tree">
-        <!-- Level 1: Oheň (ponechán funkční) -->
-        <div class="research-row">
-            <div id="researchFire" class="upgrade research-item" title="Cena: 10 pampelišek, 10 stromů, 10 kamene">Oheň</div>
-        </div>
-        
-        <!-- Level 2: Nástroje -->
-        <div class="research-row">
-            <div id="researchWoodTools" class="upgrade research-item" title="Nedostupné">Dřevěné nástroje</div>
-            <div id="researchStoneTools" class="upgrade research-item" title="Nedostupné">Kamenné nástroje</div>
-        </div>
-        
-        <!-- Level 3: Stavby -->
-        <div class="research-row">
-            <div id="researchBuildings" class="upgrade research-item" title="Vyžaduje: Dřevěné nástroje, Kamenné nástroje">Stavby</div>
+    <div id="researchSection">
+        <h2 class="centered">Výzkum</h2>
+        <div class="research-tree">
+            <!-- Level 1: Oheň (funkční) -->
+            <div class="research-row">
+                <div id="researchFire" class="upgrade research-item" title="Cena: 10 pampelišek, 10 stromů, 10 kamene">Oheň</div>
+            </div>
+            <!-- Level 2: Nástroje -->
+            <div class="research-row">
+                <div class="research-label">Nástroje</div>
+            </div>
+            <div class="research-row">
+                <div id="researchWoodTools" class="upgrade research-item" title="Nedostupné">Dřevěné nástroje</div>
+                <div id="researchStoneTools" class="upgrade research-item" title="Nedostupné">Kamenné nástroje</div>
+            </div>
+            <!-- Level 3: Stavby -->
+            <div class="research-row">
+                <div id="researchBuildings" class="upgrade research-item" title="Vyžaduje: Dřevěné nástroje, Kamenné nástroje">Stavby</div>
+            </div>
         </div>
     </div>
-</div>
 
-<button id="saveBtn">Uložit hru</button>
-<button id="resetBtn">Resetovat hru</button>
-    
     <script src="game.js"></script>
-
-    
 </body>
 </html>
